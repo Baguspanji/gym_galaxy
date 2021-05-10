@@ -1,9 +1,10 @@
-import 'dart:async';
-
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:format_indonesia/format_indonesia.dart';
+import 'package:gym_galaxy/src/models/getAbsensi.dart';
 import 'package:gym_galaxy/src/models/getMembers.dart';
-import 'package:gym_galaxy/src/ui/edit.dart';
+import 'package:gym_galaxy/src/ui/perpanjangan.dart';
 import 'package:gym_galaxy/src/ui/profil.dart';
 import 'package:gym_galaxy/src/ui/utils/dialog.dart';
 
@@ -17,22 +18,24 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   TextEditingController _cariData = new TextEditingController();
 
-  final membersReference =
-      FirebaseDatabase.instance.reference().child('members');
+  final membersReference = FirebaseDatabase.instance.reference();
 
-  List items = List();
-  StreamSubscription _onMemberSubscription;
+  List<GetMembers> _items = List();
+  List<GetMembers> _search = List();
+  List<GetAbsensi> _absen = List();
 
   @override
   void initState() {
-    readData();
     super.initState();
+    readData();
   }
 
   @override
   void dispose() {
-    _onMemberSubscription.cancel();
     super.dispose();
+    _items.clear();
+    _search.clear();
+    _absen.clear();
   }
 
   TextStyle _style(Color color, double size, FontWeight weight) {
@@ -76,9 +79,7 @@ class _HomePageState extends State<HomePage> {
                       controller: _cariData,
                       textAlign: TextAlign.left,
                       textInputAction: TextInputAction.search,
-                      onSubmitted: (value) {
-                        _onSearch();
-                      },
+                      onChanged: _onSearch,
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.all(8),
                         prefixIcon: Icon(Icons.search),
@@ -122,18 +123,33 @@ class _HomePageState extends State<HomePage> {
               decoration: BoxDecoration(
                 color: Colors.grey[100],
               ),
-              child: ListView.builder(
-                padding: EdgeInsets.all(0),
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      buildItems(size, items[index].id, items[index].nama,
-                          items[index].alamat),
-                    ],
-                  );
-                },
-              ),
+              child: (_search.length != 0 || _cariData.text.isNotEmpty)
+                  ? ListView.builder(
+                      padding: EdgeInsets.all(0),
+                      itemCount: _search.length,
+                      itemBuilder: (context, i) {
+                        final cari = _search[i];
+                        return Column(
+                          children: [
+                            buildItems(size, cari.id, cari.nama, cari.alamat,
+                                cari.dari, cari.sampai, cari.tipeMember),
+                          ],
+                        );
+                      },
+                    )
+                  : ListView.builder(
+                      padding: EdgeInsets.all(0),
+                      itemCount: _items.length,
+                      itemBuilder: (context, i) {
+                        final item = _items[i];
+                        return Column(
+                          children: [
+                            buildItems(size, item.id, item.nama, item.alamat,
+                                item.dari, item.sampai, item.tipeMember),
+                          ],
+                        );
+                      },
+                    ),
             )
           ],
         ),
@@ -141,10 +157,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Container buildItems(Size size, String uid, String nama, String alamat) {
+  Container buildItems(Size size, String uid, String nama, String alamat,
+      DateTime dari, DateTime sampai, String member) {
+    String _dari = (Waktu(dari).yMMMMEEEEd()).toString();
+    String _sampai = (Waktu(sampai).yMMMMEEEEd()).toString();
     return Container(
-      margin: EdgeInsets.only(bottom: 10),
-      height: size.height * 0.1,
+      margin: EdgeInsets.only(bottom: 8),
+      height: size.height * 0.13,
       width: size.width * 0.9,
       padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
       decoration: BoxDecoration(
@@ -157,10 +176,11 @@ class _HomePageState extends State<HomePage> {
       ),
       child: InkWell(
         onTap: () {
-          _onUser(context, uid);
+          _onUser(context, uid, member);
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,18 +188,75 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Text(
                   nama,
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w400,
+                  style: _style(
+                    Colors.black,
+                    21,
+                    FontWeight.w500,
                   ),
                 ),
                 Text(
                   alamat,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w300,
+                  style: _style(
+                    Colors.black,
+                    14,
+                    FontWeight.w300,
                   ),
                 ),
+                SizedBox(height: 4),
+                dari == DateTime.parse('0000-00-00')
+                    ? Text(
+                        '-',
+                        style: _style(
+                          Colors.blue,
+                          14,
+                          FontWeight.w500,
+                        ),
+                      )
+                    : Row(
+                        children: [
+                          Icon(
+                            Icons.arrow_circle_up,
+                            size: 14,
+                            color: Colors.blue,
+                          ),
+                          SizedBox(width: 2),
+                          Text(
+                            _dari,
+                            style: _style(
+                              Colors.blue,
+                              14,
+                              FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                sampai == DateTime.parse('0000-00-00')
+                    ? Text(
+                        '-',
+                        style: _style(
+                          Colors.redAccent,
+                          14,
+                          FontWeight.w500,
+                        ),
+                      )
+                    : Row(
+                        children: [
+                          Icon(
+                            Icons.arrow_circle_down,
+                            size: 14,
+                            color: Colors.redAccent,
+                          ),
+                          SizedBox(width: 2),
+                          Text(
+                            _sampai,
+                            style: _style(
+                              Colors.redAccent,
+                              14,
+                              FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
               ],
             ),
             Icon(Icons.arrow_forward_ios_outlined)
@@ -189,20 +266,61 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _onSearch() {
-    items.clear();
-    membersReference
-        .orderByChild("nama")
-        .startAt(_cariData.text)
-        .onChildAdded
-        .listen(_onMember);
-    ;
+  _onSearch(String value) {
+    _search.clear();
+    if (value.isEmpty) {
+      setState(() {});
+      return;
+    }
+
+    _items.forEach((e) {
+      if (e.nama.toLowerCase().contains(value.toLowerCase()) ||
+          e.alamat.toLowerCase().contains(value.toLowerCase())) _search.add(e);
+    });
+    setState(() {});
   }
 
-  void _onUser(context, String uid) {
+  void _onAdd() {
+    Navigator.pushNamed(context, '/add');
+  }
+
+  void readData() {
+    _items.clear();
+    _absen.clear();
+
+    membersReference
+        .child("members")
+        // .orderByChild("member/sampai")
+        // .startAt(DateTime.now().toString())
+        .onChildAdded
+        .listen(_onMember);
+
+    membersReference.child("absensi").onChildAdded.listen(_onAbsensi);
+  }
+
+  void _onMember(Event event) {
+    setState(() {
+      _items.add(new GetMembers.fromSnapshot(event.snapshot));
+      // _items.sort((a, b) => a.sampai.compareTo(b.sampai));
+      _items.sort((e, f) => f.sampai.compareTo(DateTime.now()));
+    });
+  }
+
+  void _onAbsensi(Event event) {
+    setState(() {
+      _absen.add(new GetAbsensi.fromSnapshot(event.snapshot));
+    });
+  }
+
+  void _onUser(BuildContext context, String uid, String member) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
+          DateTime now = DateTime.now();
+          var absen = _absen.where((e) =>
+              e.id.contains(uid) &&
+              DateFormat('yyyy-MM-dd').format(e.tanggal) ==
+                  DateFormat('yyyy-MM-dd').format(now));
           return SimpleDialog(
             title: Text('Pilih Aksi'),
             children: [
@@ -214,53 +332,58 @@ class _HomePageState extends State<HomePage> {
                   _onProfil(uid);
                 },
               ),
-              SimpleDialogItem(
-                icon: Icons.history_rounded,
-                color: Colors.orange,
-                text: 'Absensi Member',
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              SimpleDialogItem(
-                icon: Icons.bar_chart_rounded,
-                color: Colors.red,
-                text: 'Perpanjang Member',
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
+              absen.isEmpty
+                  ? SimpleDialogItem(
+                      icon: Icons.history_rounded,
+                      color: Colors.orange,
+                      text: 'Absensi Member',
+                      onPressed: () {
+                        _onAbsen(context, uid);
+                      },
+                    )
+                  : SimpleDialogItem(
+                      icon: Icons.history_rounded,
+                      color: Colors.orange,
+                      text: 'Absensi Member',
+                      onPressed: () {
+                        Navigator.pop(context);
+                        showAlertDialog(
+                            context, "Peringatan", "Member sudah absen!");
+                      },
+                    ),
+              member != 'Pengunjung'
+                  ? SimpleDialogItem(
+                      icon: Icons.bar_chart_rounded,
+                      color: Colors.red,
+                      text: 'Perpanjang Member',
+                      onPressed: () {
+                        _onPerpanjangan(uid);
+                      },
+                    )
+                  : SimpleDialogItem(
+                      icon: Icons.bar_chart_rounded,
+                      color: Colors.red,
+                      text: 'Perpanjang Member',
+                      onPressed: () {
+                        Navigator.pop(context);
+                        showAlertDialog(context, "Peringatan",
+                            "Status member masih pengunjung!");
+                      },
+                    ),
             ],
           );
         });
   }
 
-  void _onAdd() {
-    Navigator.pushNamed(context, '/add');
-  }
-
-  void readData() {
-    _onMemberSubscription = membersReference.onChildAdded.listen(_onMember);
-  }
-
-  void _onMember(Event event) {
-    setState(() {
-      items.add(new GetMembers.fromSnapshot(event.snapshot));
+  void _onAbsen(BuildContext context, String uid) {
+    membersReference
+        .child("absensi")
+        .push()
+        .set({'id': uid, 'tanggal': DateTime.now().toString()}).then((_) {
+      readData();
+      Navigator.pop(context);
+      showAlertDialog(context, "Berhasil", "Berhasil Absensi!");
     });
-  }
-
-  void _onEdit(String uid) {
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (BuildContext context) => EditPage(uid: uid)));
-  }
-
-  void _onDelete(String uid) {
-    membersReference.child(uid).remove();
-    items.clear();
-    readData();
-    Navigator.pop(context);
   }
 
   void _onProfil(String uid) {
@@ -268,5 +391,39 @@ class _HomePageState extends State<HomePage> {
         context,
         MaterialPageRoute(
             builder: (BuildContext context) => ProfilPage(uid: uid)));
+  }
+
+  void _onPerpanjangan(String uid) {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) => PerpanjanganPage(uid: uid)));
+  }
+
+  showAlertDialog(BuildContext context, String title, String isi) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        return;
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(title),
+      content: Text(isi),
+      // actions: [
+      //   okButton,
+      // ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }

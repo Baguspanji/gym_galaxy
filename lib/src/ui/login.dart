@@ -31,12 +31,6 @@ class _LoginPageState extends State<LoginPage> {
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-  @override
-  void initState() {
-    _cekSignIn();
-    super.initState();
-  }
-
   void _cekSignIn() async {
     await Firebase.initializeApp();
     FirebaseAuth.instance.authStateChanges().listen((User user) {

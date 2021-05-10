@@ -13,12 +13,15 @@ class AddPage extends StatefulWidget {
 class _AddPageState extends State<AddPage> {
   final databaseReference = FirebaseDatabase.instance.reference();
 
-  TextEditingController _nik = new TextEditingController();
   TextEditingController _nama = new TextEditingController();
   TextEditingController _alamat = new TextEditingController();
   TextEditingController _tempatLahir = TextEditingController();
   TextEditingController _dateLahir = TextEditingController();
   TextEditingController _tanggalLahir = TextEditingController();
+  TextEditingController _dateDari = TextEditingController();
+  TextEditingController _tanggalDari = TextEditingController();
+  TextEditingController _dateSampai = TextEditingController();
+  TextEditingController _tanggalSampai = TextEditingController();
 
   TextStyle _style(Color color, double size, FontWeight weight) {
     return TextStyle(
@@ -29,29 +32,41 @@ class _AddPageState extends State<AddPage> {
   }
 
   void _onAdd(context) async {
-    if (_nik.text == "" ||
-        _nama.text == "" ||
+    if (_nama.text == "" ||
         _alamat.text == "" ||
         _tempatLahir.text == "" ||
-        _tanggalLahir.text == "") {
+        _tanggalLahir.text == "" ||
+        _dropdownValue == 'Pilih Member') {
       showAlertDialog(context);
     } else {
       databaseReference.child("members").push().set({
-        'nik': _nik.text,
         'nama': _nama.text,
         'alamat': _alamat.text,
         'tempat_lahir': _tempatLahir.text,
         'tanggal_lahir': _tanggalLahir.text,
+        'tipe_member': _dropdownValue,
+        'status': 1,
+        'member': {
+          'dari': _tanggalDari.text != '',
+          'sampai': _tanggalSampai.text,
+        }
       }).then((value) {
-        _nik.text = '';
         _nama.text = '';
         _alamat.text = '';
         _tempatLahir.text = '';
         _tanggalLahir.text = '';
         _dateLahir.text = '';
+        _dropdownValue = 'Pilih Member';
+        _tanggalDari.text = '';
+        _dateDari.text = '';
+        _tanggalSampai.text = '';
+        _dateSampai.text = '';
+        setState(() {});
       });
     }
   }
+
+  String _dropdownValue = 'Pilih Member';
 
   @override
   Widget build(BuildContext context) {
@@ -73,14 +88,14 @@ class _AddPageState extends State<AddPage> {
             ),
             SizedBox(height: 40),
             buildInput(
-                size, _nik, Icons.card_membership_outlined, 'Masukkan NIK'),
-            buildInput(
                 size, _nama, Icons.person_outline_outlined, 'Masukkan Nama'),
             buildInput(size, _alamat, Icons.home_outlined, 'Masukkan Alamat'),
             buildInput(size, _tempatLahir, Icons.home_work_outlined,
                 'Masukkan Tempat Lahir'),
             buildDatePicker(size, context, _dateLahir, _tanggalLahir,
                 Icons.date_range_outlined, 'Masukkan Tanggal Lahir'),
+            buildDropdown(size),
+            buildMember(context, size),
             SizedBox(height: 20),
             InkWell(
               onTap: () {
@@ -92,6 +107,10 @@ class _AddPageState extends State<AddPage> {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                     color: Colors.greenAccent,
+                    border: Border.all(
+                      width: 1,
+                      color: Colors.black54,
+                    ),
                     borderRadius: BorderRadius.circular(18)),
                 child: Text(
                   "Simpan",
@@ -110,6 +129,10 @@ class _AddPageState extends State<AddPage> {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                     color: Colors.blueAccent,
+                    border: Border.all(
+                      width: 1,
+                      color: Colors.black54,
+                    ),
                     borderRadius: BorderRadius.circular(18)),
                 child: Text(
                   "Kembali",
@@ -119,6 +142,78 @@ class _AddPageState extends State<AddPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildMember(BuildContext context, Size size) {
+    if (_dropdownValue == 'Member Mingguan' ||
+        _dropdownValue == 'Member Bulanan') {
+      return Column(
+        children: [
+          buildDatePicker(size, context, _dateDari, _tanggalDari,
+              Icons.date_range_outlined, 'Member dari tanggal'),
+          buildDatePicker(size, context, _dateSampai, _tanggalSampai,
+              Icons.date_range_outlined, 'Member sampai tanggal')
+        ],
+      );
+    } else {
+      return SizedBox(height: 2);
+    }
+  }
+
+  Container buildDropdown(Size size) {
+    return Container(
+      width: size.width * 0.8,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Icon(
+            Icons.card_membership_outlined,
+            color: Colors.grey[500],
+          ),
+          Container(
+            alignment: Alignment.center,
+            width: size.width * 0.7,
+            margin: EdgeInsets.only(bottom: 10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(width: 1, color: Colors.grey[500]),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: DropdownButton<String>(
+              value: _dropdownValue,
+              elevation: 16,
+              style: const TextStyle(color: Colors.grey),
+              onChanged: (String newValue) {
+                setState(() {
+                  _dropdownValue = newValue;
+                });
+              },
+              items: <String>[
+                'Pilih Member',
+                'Pengunjung',
+                'Member Mingguan',
+                'Member Bulanan'
+              ].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Container(
+                    width: size.width * 0.6,
+                    child: Text(
+                      value,
+                      style: _style(
+                        Colors.grey[500],
+                        16,
+                        FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
       ),
     );
   }

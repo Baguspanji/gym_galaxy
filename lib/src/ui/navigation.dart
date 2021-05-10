@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
+import 'package:gym_galaxy/src/ui/absensi.dart';
 import 'package:gym_galaxy/src/ui/home.dart';
 import 'package:gym_galaxy/src/ui/user.dart';
 
@@ -38,7 +39,7 @@ class _NavbarState extends State<Navbar> {
           },
           children: <Widget>[
             HomePage(),
-            HomePage(),
+            AbsensiPage(),
             UserPage(),
           ],
         ),
