@@ -131,8 +131,15 @@ class _HomePageState extends State<HomePage> {
                         final cari = _search[i];
                         return Column(
                           children: [
-                            buildItems(size, cari.id, cari.nama, cari.alamat,
-                                cari.dari, cari.sampai, cari.tipeMember),
+                            buildItems(
+                                size,
+                                cari.id,
+                                cari.nama,
+                                cari.alamat,
+                                cari.dari,
+                                cari.sampai,
+                                cari.tipeMember,
+                                cari.status),
                           ],
                         );
                       },
@@ -144,8 +151,15 @@ class _HomePageState extends State<HomePage> {
                         final item = _items[i];
                         return Column(
                           children: [
-                            buildItems(size, item.id, item.nama, item.alamat,
-                                item.dari, item.sampai, item.tipeMember),
+                            buildItems(
+                                size,
+                                item.id,
+                                item.nama,
+                                item.alamat,
+                                item.dari,
+                                item.sampai,
+                                item.tipeMember,
+                                item.status),
                           ],
                         );
                       },
@@ -158,7 +172,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Container buildItems(Size size, String uid, String nama, String alamat,
-      DateTime dari, DateTime sampai, String member) {
+      DateTime dari, DateTime sampai, String member, int status) {
     String _dari = (Waktu(dari).yMMMMEEEEd()).toString();
     String _sampai = (Waktu(sampai).yMMMMEEEEd()).toString();
     return Container(
@@ -167,7 +181,7 @@ class _HomePageState extends State<HomePage> {
       width: size.width * 0.9,
       padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: status == 1 ? Colors.white : Colors.grey.shade400,
         border: Border.all(
           width: 1,
           color: Colors.blueGrey,
@@ -176,7 +190,7 @@ class _HomePageState extends State<HomePage> {
       ),
       child: InkWell(
         onTap: () {
-          _onUser(context, uid, member);
+          _onUser(context, uid, member, status);
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -288,20 +302,15 @@ class _HomePageState extends State<HomePage> {
     _items.clear();
     _absen.clear();
 
-    membersReference
-        .child("members")
-        // .orderByChild("member/sampai")
-        // .startAt(DateTime.now().toString())
-        .onChildAdded
-        .listen(_onMember);
+    membersReference.child("members").onChildAdded.listen(_onMember);
 
-    membersReference.child("absensi").onChildAdded.listen(_onAbsensi);
+    // membersReference.child("absensi").onChildAdded.listen(_onAbsensi);
   }
 
   void _onMember(Event event) {
     setState(() {
       _items.add(new GetMembers.fromSnapshot(event.snapshot));
-      // _items.sort((a, b) => a.sampai.compareTo(b.sampai));
+      _items.sort((a, b) => b.status.compareTo(a.status));
       _items.sort((e, f) => f.sampai.compareTo(DateTime.now()));
     });
   }
@@ -312,7 +321,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _onUser(BuildContext context, String uid, String member) {
+  void _onUser(BuildContext context, String uid, String member, int status) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -332,44 +341,48 @@ class _HomePageState extends State<HomePage> {
                   _onProfil(uid);
                 },
               ),
-              absen.isEmpty
-                  ? SimpleDialogItem(
-                      icon: Icons.history_rounded,
-                      color: Colors.orange,
-                      text: 'Absensi Member',
-                      onPressed: () {
-                        _onAbsen(context, uid);
-                      },
-                    )
-                  : SimpleDialogItem(
-                      icon: Icons.history_rounded,
-                      color: Colors.orange,
-                      text: 'Absensi Member',
-                      onPressed: () {
-                        Navigator.pop(context);
-                        showAlertDialog(
-                            context, "Peringatan", "Member sudah absen!");
-                      },
-                    ),
-              member != 'Pengunjung'
-                  ? SimpleDialogItem(
-                      icon: Icons.bar_chart_rounded,
-                      color: Colors.red,
-                      text: 'Perpanjang Member',
-                      onPressed: () {
-                        _onPerpanjangan(uid);
-                      },
-                    )
-                  : SimpleDialogItem(
-                      icon: Icons.bar_chart_rounded,
-                      color: Colors.red,
-                      text: 'Perpanjang Member',
-                      onPressed: () {
-                        Navigator.pop(context);
-                        showAlertDialog(context, "Peringatan",
-                            "Status member masih pengunjung!");
-                      },
-                    ),
+              status == 1
+                  ? absen.isEmpty
+                      ? SimpleDialogItem(
+                          icon: Icons.history_rounded,
+                          color: Colors.orange,
+                          text: 'Absensi Member',
+                          onPressed: () {
+                            _onAbsen(context, uid);
+                          },
+                        )
+                      : SimpleDialogItem(
+                          icon: Icons.history_rounded,
+                          color: Colors.orange,
+                          text: 'Absensi Member',
+                          onPressed: () {
+                            Navigator.pop(context);
+                            showAlertDialog(
+                                context, "Peringatan", "Member sudah absen!");
+                          },
+                        )
+                  : Container(),
+              status == 1
+                  ? member != 'Pengunjung'
+                      ? SimpleDialogItem(
+                          icon: Icons.bar_chart_rounded,
+                          color: Colors.red,
+                          text: 'Perpanjang Member',
+                          onPressed: () {
+                            _onPerpanjangan(uid);
+                          },
+                        )
+                      : SimpleDialogItem(
+                          icon: Icons.bar_chart_rounded,
+                          color: Colors.red,
+                          text: 'Perpanjang Member',
+                          onPressed: () {
+                            Navigator.pop(context);
+                            showAlertDialog(context, "Peringatan",
+                                "Status member masih pengunjung!");
+                          },
+                        )
+                  : Container(),
             ],
           );
         });
