@@ -30,7 +30,7 @@ class _NavbarState extends State<Navbar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       body: SizedBox.expand(
         child: PageView(
           controller: _pageController,

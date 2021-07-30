@@ -74,7 +74,7 @@ class _PerpanjanganPageState extends State<PerpanjanganPage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       body: Container(
         alignment: Alignment.center,
         child: Column(

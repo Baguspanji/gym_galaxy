@@ -44,7 +44,7 @@ class _HomePageState extends State<AbsensiPage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.grey[100],
       body: Container(
         alignment: Alignment.center,

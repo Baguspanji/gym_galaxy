@@ -39,31 +39,40 @@ class _AddPageState extends State<AddPage> {
         _dropdownValue == 'Pilih Member') {
       showAlertDialog(context);
     } else {
-      databaseReference.child("members").push().set({
-        'nama': _nama.text,
-        'alamat': _alamat.text,
-        'tempat_lahir': _tempatLahir.text,
-        'tanggal_lahir': _tanggalLahir.text,
-        'tipe_member': _dropdownValue,
-        'status': 1,
-        'member': {
-          'dari': _tanggalDari.text != '',
-          'sampai': _tanggalSampai.text,
-        }
-      }).then((value) {
-        _nama.text = '';
-        _alamat.text = '';
-        _tempatLahir.text = '';
-        _tanggalLahir.text = '';
-        _dateLahir.text = '';
-        _dropdownValue = 'Pilih Member';
-        _tanggalDari.text = '';
-        _dateDari.text = '';
-        _tanggalSampai.text = '';
-        _dateSampai.text = '';
-        setState(() {});
-      });
+      if (_dropdownValue != 'Pengunjung' &&
+          _tanggalDari.text == '' &&
+          _tanggalSampai.text == '') {
+        showAlertDialog(context);
+      } else {
+        databaseReference.child("members").push().set({
+          'nama': _nama.text,
+          'alamat': _alamat.text,
+          'tempat_lahir': _tempatLahir.text,
+          'tanggal_lahir': _tanggalLahir.text,
+          'tipe_member': _dropdownValue,
+          'status': 1,
+          'member': {
+            'dari': _tanggalDari.text,
+            'sampai': _tanggalSampai.text,
+          }
+        }).then((value) {
+          Navigator.pushReplacementNamed(context, '/home');
+          // _nama.text = '';
+          // _alamat.text = '';
+          // _tempatLahir.text = '';
+          // _tanggalLahir.text = '';
+          // _dateLahir.text = '';
+          // _dropdownValue = 'Pilih Member';
+          // _tanggalDari.text = '';
+          // _dateDari.text = '';
+          // _tanggalSampai.text = '';
+          // _dateSampai.text = '';
+          // setState(() {});
+        });
+      }
     }
+    print(_tanggalDari.text);
+    print(_tanggalSampai.text);
   }
 
   String _dropdownValue = 'Pilih Member';
@@ -72,7 +81,7 @@ class _AddPageState extends State<AddPage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       body: Container(
         alignment: Alignment.center,
         child: Column(

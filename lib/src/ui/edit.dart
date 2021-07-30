@@ -80,7 +80,7 @@ class _EditPageState extends State<EditPage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       body: Container(
         alignment: Alignment.center,
         child: Column(

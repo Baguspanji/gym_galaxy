@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _cekSignIn() async {
     await Firebase.initializeApp();
-    FirebaseAuth.instance.authStateChanges().listen((User user) {
+    FirebaseAuth.instance.authStateChanges().listen((User user) async {
       _users.forEach((e) {
         if (e.email.contains(user.email)) isUserSignedIn = true;
       });
@@ -60,9 +60,42 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (BuildContext context) => Navbar()));
       } else {
+        _signOut().then((value) => showAlertDialog(context));
         print('User is currently signed out!');
       }
     });
+  }
+
+  Future<Null> _signOut() async {
+    await FirebaseAuth.instance.signOut();
+    await GoogleSignIn().signOut();
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        return;
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Peringatan"),
+      content: Text("User tidak terdaftar!"),
+      // actions: [
+      //   okButton,
+      // ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   void _onLogin() {
