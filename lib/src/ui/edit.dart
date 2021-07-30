@@ -64,15 +64,31 @@ class _EditPageState extends State<EditPage> {
         _dropdownValue == 'Pilih Member') {
       showAlertDialog(context);
     } else {
-      membersReference.child(uid).update({
-        'nama': _nama.text,
-        'alamat': _alamat.text,
-        'tempat_lahir': _tempatLahir.text,
-        'tanggal_lahir': _tanggalLahir.text,
-        'tipe_member': _dropdownValue,
-      }).then((value) {
-        Navigator.pushReplacementNamed(context, '/home');
-      });
+      if (_dropdownValue == 'Pengunjung') {
+        membersReference.child(uid).update({
+          'nama': _nama.text,
+          'alamat': _alamat.text,
+          'tempat_lahir': _tempatLahir.text,
+          'tanggal_lahir': _tanggalLahir.text,
+          'tipe_member': _dropdownValue,
+          'member': {
+            'dari': '',
+            'sampai': '',
+          }
+        }).then((value) {
+          Navigator.pushReplacementNamed(context, '/home');
+        });
+      } else {
+        membersReference.child(uid).update({
+          'nama': _nama.text,
+          'alamat': _alamat.text,
+          'tempat_lahir': _tempatLahir.text,
+          'tanggal_lahir': _tanggalLahir.text,
+          'tipe_member': _dropdownValue,
+        }).then((value) {
+          Navigator.pushReplacementNamed(context, '/home');
+        });
+      }
     }
   }
 
