@@ -15,19 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "1096786625163-gbejj1mdb4tnlg5dotavrk59v26falaa.apps.googleusercontent.com",
+          "client_id": "1096786625163-cmk4oiavh7hq7rvmnp7le253mdqnsufd.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.gym_galaxy",
-            "certificate_hash": "be5211a1e8995acc7db40259a4c8520d444a5a22"
+            "certificate_hash": "d62f4789a839c4ae198081df687b557ad309568d"
           }
         },
         {
-          "client_id": "1096786625163-sment6mqsif00639v935iubat0fklnlv.apps.googleusercontent.com",
+          "client_id": "1096786625163-otdj5g27qeanhkdu6hvn0atvt2505vdk.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.gym_galaxy",
-            "certificate_hash": "9353e110b8d00e4151f4b5ec0907b81def373844"
+            "certificate_hash": "b134946a408c38e3aa2e24afb711411fc2de5954"
           }
         },
         {
