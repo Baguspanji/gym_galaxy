@@ -27,15 +27,11 @@ class _UserPageState extends State<UserPage> {
     );
   }
 
-  _readData() {
-    setState(() {
-      getNama().then((value) {
-        print('nama : $value');
-        _nama = value;
-      });
-      getEmail().then((value) => _email = value);
-      getFoto().then((value) => _foto = value);
-    });
+  _readData() async {
+    await getNama().then((value) => _nama = value);
+    await getEmail().then((value) => _email = value);
+    await getFoto().then((value) => _foto = value);
+    setState(() {});
   }
 
   @override
