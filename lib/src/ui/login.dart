@@ -54,11 +54,14 @@ class _LoginPageState extends State<LoginPage> {
   void _cekSignIn() async {
     await Firebase.initializeApp();
     FirebaseAuth.instance.authStateChanges().listen((User user) async {
-      setNama(user.displayName);
-      setEmail(user.email);
-      setFoto(user.photoURL);
-      _users.forEach((e) {
-        if (e.email.contains(user.email)) isUserSignedIn = true;
+      await setNama(user.displayName);
+      await setEmail(user.email);
+      await setFoto(user.photoURL);
+      _users.forEach((e) async {
+        if (e.email.contains(user.email)) {
+          isUserSignedIn = true;
+          await setRole(e.role);
+        }
       });
       if (isUserSignedIn) {
         Navigator.pushReplacement(context,

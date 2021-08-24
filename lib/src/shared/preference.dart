@@ -67,3 +67,20 @@ Future rmvEmail() async {
 
   return prefs.remove("email");
 }
+
+Future setRole(String value) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.setString("Role", value);
+}
+
+Future getRole() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  return prefs.getString("Role");
+}
+
+Future rmvRole() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  return prefs.remove("Role");
+}
