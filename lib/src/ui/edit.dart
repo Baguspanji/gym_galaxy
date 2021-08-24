@@ -3,7 +3,9 @@ import 'package:format_indonesia/format_indonesia.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:date_time_picker/date_time_picker.dart';
+import 'package:gym_galaxy/firebase/storage.dart';
 import 'package:gym_galaxy/src/models/getMembers.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditPage extends StatefulWidget {
   final String uid;
@@ -17,6 +19,7 @@ class _EditPageState extends State<EditPage> {
   final membersReference =
       FirebaseDatabase.instance.reference().child('members');
 
+  String imageUrl;
   List items = List();
 
   TextEditingController _nama = new TextEditingController();
@@ -44,6 +47,7 @@ class _EditPageState extends State<EditPage> {
     membersReference.child(widget.uid).once().then((value) {
       items.add(new GetMembers.fromSnapshot(value));
 
+      imageUrl = items[0].image;
       _nama.text = items[0].nama;
       _alamat.text = items[0].alamat;
       _tempatLahir.text = items[0].tempatLahir;
@@ -92,6 +96,21 @@ class _EditPageState extends State<EditPage> {
     }
   }
 
+  Future<void> getImage(bool select) async {
+    ImagePicker _picker = ImagePicker();
+    PickedFile image;
+
+    if (select) {
+      image = await _picker.getImage(source: ImageSource.camera);
+    } else {
+      image = await _picker.getImage(source: ImageSource.gallery);
+    }
+
+    imageUrl = await storage.uploadImage(image);
+
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -110,7 +129,46 @@ class _EditPageState extends State<EditPage> {
                 FontWeight.w500,
               ),
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 20),
+            Container(
+              height: MediaQuery.of(context).size.width * 0.3,
+              width: MediaQuery.of(context).size.width * 0.3,
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 4,
+                    blurRadius: 4,
+                    offset: Offset(0, 2), // changes position of shadow
+                  ),
+                ],
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                image: DecorationImage(
+                  image: imageUrl == null
+                      ? AssetImage('assets/noimage.png')
+                      : NetworkImage(imageUrl),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Center(
+              child: Container(
+                padding: EdgeInsets.only(top: 2.0),
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      getImage(false);
+                    },
+                    child: Text(
+                      'Upload Gambar',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
             buildInput(
                 size, _nama, Icons.person_outline_outlined, 'Masukkan Nama'),
             buildInput(size, _alamat, Icons.home_outlined, 'Masukkan Alamat'),

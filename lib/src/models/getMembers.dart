@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 class GetMembers {
   String _id;
   String _alamat;
+  String _image;
   String _nama;
   DateTime _tanggalLahir;
   String _tempatLahir;
@@ -14,6 +15,7 @@ class GetMembers {
   GetMembers(
     this._id,
     this._alamat,
+    this._image,
     this._nama,
     this._tanggalLahir,
     this._tempatLahir,
@@ -25,6 +27,7 @@ class GetMembers {
 
   GetMembers.map(dynamic obj) {
     this._alamat = obj['alamat'];
+    this._image = obj['image'];
     this._nama = obj['nama'];
     this._tanggalLahir = obj['tanggal_lahir'];
     this._tempatLahir = obj['tempat_lahir'];
@@ -38,6 +41,7 @@ class GetMembers {
 
   String get id => _id;
   String get alamat => _alamat;
+  String get image => _image;
   String get nama => _nama;
   DateTime get tanggalLahir => _tanggalLahir;
   String get tempatLahir => _tempatLahir;
@@ -49,6 +53,7 @@ class GetMembers {
   GetMembers.fromSnapshot(DataSnapshot snapshot) {
     _id = snapshot.key;
     _alamat = snapshot.value['alamat'];
+    _image = snapshot.value['image'];
     _nama = snapshot.value['nama'];
     _tanggalLahir = DateTime.parse(snapshot.value['tanggal_lahir']);
     _tempatLahir = snapshot.value['tempat_lahir'];

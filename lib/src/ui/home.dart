@@ -52,19 +52,15 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        title: Text('Gym Galaxy'),
+        backgroundColor: Colors.black,
+      ),
       body: Container(
         alignment: Alignment.center,
         child: Column(
           children: [
-            SizedBox(height: 50),
-            Text(
-              "Gym Galaxy Pasuruan",
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 30),
+            SizedBox(height: 10),
             Padding(
               padding: EdgeInsets.only(left: 20, right: 20),
               child: Row(
@@ -117,7 +113,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Container(
-              height: size.height * 0.71,
+              height: size.height * 0.73,
               padding: EdgeInsets.only(left: 10, right: 10),
               margin: EdgeInsets.only(top: 10),
               decoration: BoxDecoration(
@@ -132,14 +128,16 @@ class _HomePageState extends State<HomePage> {
                         return Column(
                           children: [
                             buildItems(
-                                size,
-                                cari.id,
-                                cari.nama,
-                                cari.alamat,
-                                cari.dari,
-                                cari.sampai,
-                                cari.tipeMember,
-                                cari.status),
+                              size,
+                              cari.id,
+                              cari.nama,
+                              cari.alamat,
+                              cari.dari,
+                              cari.sampai,
+                              cari.tipeMember,
+                              cari.status,
+                              cari.image,
+                            ),
                           ],
                         );
                       },
@@ -152,14 +150,16 @@ class _HomePageState extends State<HomePage> {
                         return Column(
                           children: [
                             buildItems(
-                                size,
-                                item.id,
-                                item.nama,
-                                item.alamat,
-                                item.dari,
-                                item.sampai,
-                                item.tipeMember,
-                                item.status),
+                              size,
+                              item.id,
+                              item.nama,
+                              item.alamat,
+                              item.dari,
+                              item.sampai,
+                              item.tipeMember,
+                              item.status,
+                              item.image,
+                            ),
                           ],
                         );
                       },
@@ -172,7 +172,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Container buildItems(Size size, String uid, String nama, String alamat,
-      DateTime dari, DateTime sampai, String member, int status) {
+      DateTime dari, DateTime sampai, String member, int status, String image) {
     String _dari = (Waktu(dari).yMMMMEEEEd()).toString();
     String _sampai = (Waktu(sampai).yMMMMEEEEd()).toString();
     return Container(
@@ -196,82 +196,98 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  nama,
-                  style: _style(
-                    Colors.black,
-                    21,
-                    FontWeight.w500,
-                  ),
+            Container(
+              width: 80,
+              height: 80,
+              margin: EdgeInsets.only(right: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: image == null
+                      ? AssetImage('assets/noimage.png')
+                      : NetworkImage(image),
                 ),
-                Text(
-                  alamat,
-                  style: _style(
-                    Colors.black,
-                    14,
-                    FontWeight.w300,
+              ),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    nama,
+                    style: _style(
+                      Colors.black,
+                      21,
+                      FontWeight.w500,
+                    ),
                   ),
-                ),
-                SizedBox(height: 4),
-                dari == DateTime.parse('0000-00-00')
-                    ? Text(
-                        '-',
-                        style: _style(
-                          Colors.blue,
-                          14,
-                          FontWeight.w500,
-                        ),
-                      )
-                    : Row(
-                        children: [
-                          Icon(
-                            Icons.arrow_circle_up,
-                            size: 14,
-                            color: Colors.blue,
+                  Text(
+                    alamat,
+                    style: _style(
+                      Colors.black,
+                      14,
+                      FontWeight.w300,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  dari == DateTime.parse('0000-00-00')
+                      ? Text(
+                          '-',
+                          style: _style(
+                            Colors.blue,
+                            14,
+                            FontWeight.w500,
                           ),
-                          SizedBox(width: 2),
-                          Text(
-                            _dari,
-                            style: _style(
-                              Colors.blue,
-                              14,
-                              FontWeight.w500,
+                        )
+                      : Row(
+                          children: [
+                            Icon(
+                              Icons.arrow_circle_up,
+                              size: 14,
+                              color: Colors.blue,
                             ),
-                          ),
-                        ],
-                      ),
-                sampai == DateTime.parse('0000-00-00')
-                    ? Text(
-                        '-',
-                        style: _style(
-                          Colors.redAccent,
-                          14,
-                          FontWeight.w500,
-                        ),
-                      )
-                    : Row(
-                        children: [
-                          Icon(
-                            Icons.arrow_circle_down,
-                            size: 14,
-                            color: Colors.redAccent,
-                          ),
-                          SizedBox(width: 2),
-                          Text(
-                            _sampai,
-                            style: _style(
-                              Colors.redAccent,
-                              14,
-                              FontWeight.w500,
+                            SizedBox(width: 2),
+                            Text(
+                              _dari,
+                              style: _style(
+                                Colors.blue,
+                                14,
+                                FontWeight.w500,
+                              ),
                             ),
+                          ],
+                        ),
+                  sampai == DateTime.parse('0000-00-00')
+                      ? Text(
+                          '-',
+                          style: _style(
+                            Colors.redAccent,
+                            14,
+                            FontWeight.w500,
                           ),
-                        ],
-                      ),
-              ],
+                        )
+                      : Row(
+                          children: [
+                            Icon(
+                              Icons.arrow_circle_down,
+                              size: 14,
+                              color: Colors.redAccent,
+                            ),
+                            SizedBox(width: 2),
+                            Text(
+                              _sampai,
+                              style: _style(
+                                Colors.redAccent,
+                                14,
+                                FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                ],
+              ),
             ),
             Icon(Icons.arrow_forward_ios_outlined)
           ],
@@ -328,7 +344,7 @@ class _HomePageState extends State<HomePage> {
           DateTime now = DateTime.now();
           var absen = _absen.where((e) =>
               e.id.contains(uid) &&
-              DateFormat('yyyy-MM-dd').format(e.tanggal) ==
+              DateFormat('yyyy-MM-dd').format(DateTime.parse(e.tanggal)) ==
                   DateFormat('yyyy-MM-dd').format(now));
           return SimpleDialog(
             title: Text('Pilih Aksi'),
@@ -390,12 +406,25 @@ class _HomePageState extends State<HomePage> {
 
   void _onAbsen(BuildContext context, String uid) {
     membersReference
-        .child("absensi")
-        .push()
-        .set({'id': uid, 'tanggal': DateTime.now().toString()}).then((_) {
-      readData();
-      Navigator.pop(context);
-      showAlertDialog(context, "Berhasil", "Berhasil Absensi!");
+        .child('absensi')
+        .orderByChild('tanggal')
+        .startAt(DateFormat('yyyy-MM-dd').format(DateTime.now()).toString())
+        .endAt(DateFormat('yyyy-MM-dd').format(DateTime.now()).toString())
+        .onChildAdded
+        .listen((e) {
+      if (e.snapshot.value['id'] == uid) {
+        Navigator.pop(context);
+        showAlertDialog(context, "Gagal", "Member sudah absen!");
+      } else {
+        membersReference.child("absensi").push().set({
+          'id': uid,
+          'tanggal': DateFormat('yyyy-MM-dd').format(DateTime.now()).toString()
+        }).then((_) {
+          readData();
+          Navigator.pop(context);
+          showAlertDialog(context, "Berhasil", "Berhasil Absensi!");
+        });
+      }
     });
   }
 

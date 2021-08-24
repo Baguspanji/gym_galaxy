@@ -110,26 +110,53 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Container(
         alignment: Alignment.center,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 20.0),
+            Container(
+              width: size.width * 0.7,
+              height: size.width * 0.5,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage('assets/logo.png'),
+                ),
+              ),
+            ),
+            SizedBox(height: 40.0),
             InkWell(
               onTap: () {
                 _onLogin();
               },
               child: Container(
-                width: size.width * 0.4,
+                width: size.width * 0.6,
                 height: size.height * 0.06,
+                padding: EdgeInsets.symmetric(vertical: 6, horizontal: 4),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                    color: Colors.blueAccent,
-                    borderRadius: BorderRadius.circular(18)),
-                child: Text(
-                  "Sign In Google",
-                  style: TextStyle(fontSize: 20.0, color: Colors.white),
+                  color: Colors.blueAccent,
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.white38,
+                      blurRadius: 6,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Image.asset('assets/google.png'),
+                    Text(
+                      "Sign In Google",
+                      style: TextStyle(fontSize: 20.0, color: Colors.white),
+                    ),
+                  ],
                 ),
               ),
             ),

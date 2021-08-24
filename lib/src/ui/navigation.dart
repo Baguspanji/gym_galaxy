@@ -46,7 +46,7 @@ class _NavbarState extends State<Navbar> {
       ),
       bottomNavigationBar: BottomNavyBar(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
         selectedIndex: _currentIndex,
         onItemSelected: (index) {
           setState(() => _currentIndex = index);
@@ -54,22 +54,22 @@ class _NavbarState extends State<Navbar> {
         },
         items: <BottomNavyBarItem>[
           BottomNavyBarItem(
-            activeColor: Colors.grey,
-            inactiveColor: Colors.grey,
+            activeColor: Colors.white,
+            inactiveColor: Colors.white,
             title: Text('Member'),
             icon: Icon(Icons.person_search),
             textAlign: TextAlign.center,
           ),
           BottomNavyBarItem(
-            activeColor: Colors.grey,
-            inactiveColor: Colors.grey,
+            activeColor: Colors.white,
+            inactiveColor: Colors.white,
             title: Text('Absensi'),
             icon: Icon(Icons.history),
             textAlign: TextAlign.center,
           ),
           BottomNavyBarItem(
-            activeColor: Colors.grey,
-            inactiveColor: Colors.grey,
+            activeColor: Colors.white,
+            inactiveColor: Colors.white,
             title: Text('Profil'),
             icon: Icon(Icons.person),
             textAlign: TextAlign.center,

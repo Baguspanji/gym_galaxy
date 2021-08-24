@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:format_indonesia/format_indonesia.dart';
+import 'package:gym_galaxy/firebase/storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddPage extends StatefulWidget {
   AddPage({Key key}) : super(key: key);
@@ -12,6 +16,8 @@ class AddPage extends StatefulWidget {
 
 class _AddPageState extends State<AddPage> {
   final databaseReference = FirebaseDatabase.instance.reference();
+
+  String imageUrl;
 
   TextEditingController _nama = new TextEditingController();
   TextEditingController _alamat = new TextEditingController();
@@ -45,6 +51,7 @@ class _AddPageState extends State<AddPage> {
         showAlertDialog(context);
       } else {
         databaseReference.child("members").push().set({
+          'image': imageUrl,
           'nama': _nama.text,
           'alamat': _alamat.text,
           'tempat_lahir': _tempatLahir.text,
@@ -57,22 +64,26 @@ class _AddPageState extends State<AddPage> {
           }
         }).then((value) {
           Navigator.pushReplacementNamed(context, '/home');
-          // _nama.text = '';
-          // _alamat.text = '';
-          // _tempatLahir.text = '';
-          // _tanggalLahir.text = '';
-          // _dateLahir.text = '';
-          // _dropdownValue = 'Pilih Member';
-          // _tanggalDari.text = '';
-          // _dateDari.text = '';
-          // _tanggalSampai.text = '';
-          // _dateSampai.text = '';
-          // setState(() {});
         });
       }
     }
-    print(_tanggalDari.text);
-    print(_tanggalSampai.text);
+    // print(_tanggalDari.text);
+    // print(_tanggalSampai.text);
+  }
+
+  Future<void> getImage(bool select) async {
+    ImagePicker _picker = ImagePicker();
+    PickedFile image;
+
+    if (select) {
+      image = await _picker.getImage(source: ImageSource.camera);
+    } else {
+      image = await _picker.getImage(source: ImageSource.gallery);
+    }
+
+    imageUrl = await storage.uploadImage(image);
+
+    setState(() {});
   }
 
   String _dropdownValue = 'Pilih Member';
@@ -95,7 +106,46 @@ class _AddPageState extends State<AddPage> {
                 FontWeight.w500,
               ),
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 20),
+            Container(
+              height: MediaQuery.of(context).size.width * 0.3,
+              width: MediaQuery.of(context).size.width * 0.3,
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 4,
+                    blurRadius: 4,
+                    offset: Offset(0, 2), // changes position of shadow
+                  ),
+                ],
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                image: DecorationImage(
+                  image: imageUrl == null
+                      ? AssetImage('assets/noimage.png')
+                      : NetworkImage(imageUrl),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Center(
+              child: Container(
+                padding: EdgeInsets.only(top: 2.0),
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      getImage(false);
+                    },
+                    child: Text(
+                      'Upload Gambar',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
             buildInput(
                 size, _nama, Icons.person_outline_outlined, 'Masukkan Nama'),
             buildInput(size, _alamat, Icons.home_outlined, 'Masukkan Alamat'),

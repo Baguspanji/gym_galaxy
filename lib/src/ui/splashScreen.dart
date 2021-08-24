@@ -34,14 +34,19 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Container(
-        alignment: Alignment.center,
-        child: Text(
-          "Gym Galaxy Pasuruan",
-          style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
+      backgroundColor: Colors.black,
+      body: Center(
+        child: Container(
+          width: size.width * 0.7,
+          height: size.width * 0.5,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: AssetImage('assets/logo.png'),
+            ),
           ),
         ),
       ),

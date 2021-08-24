@@ -15,6 +15,9 @@ class AbsensiPage extends StatefulWidget {
 class _HomePageState extends State<AbsensiPage> {
   final membersReference = FirebaseDatabase.instance.reference();
 
+  TextEditingController _dateLahir = TextEditingController();
+  TextEditingController _tanggalLahir = TextEditingController();
+
   List<GetMembers> _items = List();
   List<GetAbsensi> _absen = List();
   List<GetAbsensi> _list = List();
@@ -46,21 +49,24 @@ class _HomePageState extends State<AbsensiPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        title: Text('Gym Galaxy'),
+        backgroundColor: Colors.black,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.date_range, size: 30),
+            onPressed: () {
+              pickDate();
+            },
+          ),
+        ],
+      ),
       body: Container(
         alignment: Alignment.center,
         child: Column(
           children: [
-            SizedBox(height: 50),
-            Text(
-              "Gym Galaxy Pasuruan",
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 30),
             Container(
-              height: size.height * 0.71,
+              height: size.height * 0.8,
               padding: EdgeInsets.only(left: 10, right: 10),
               margin: EdgeInsets.only(top: 10),
               decoration: BoxDecoration(
@@ -74,8 +80,13 @@ class _HomePageState extends State<AbsensiPage> {
                   final item = _items.where((e) => e.id == absen.id);
                   return Column(
                     children: [
-                      buildItems(size, item.first.id, item.first.nama,
-                          item.first.alamat, absen.tanggal),
+                      buildItems(
+                        size,
+                        item.first.id,
+                        item.first.nama,
+                        item.first.alamat,
+                        absen.tanggal,
+                      ),
                     ],
                   );
                 },
@@ -88,8 +99,8 @@ class _HomePageState extends State<AbsensiPage> {
   }
 
   Container buildItems(
-      Size size, String uid, String nama, String alamat, DateTime now) {
-    String _now = (Waktu(now).yMMMMEEEEd()).toString();
+      Size size, String uid, String nama, String alamat, String now) {
+    String _now = (Waktu(DateTime.parse(now)).yMMMMEEEEd()).toString();
     return Container(
       margin: EdgeInsets.only(bottom: 8),
       height: size.height * 0.13,
@@ -143,6 +154,31 @@ class _HomePageState extends State<AbsensiPage> {
     );
   }
 
+  pickDate() async {
+    DateTime date = DateTime(1900);
+    FocusScope.of(context).requestFocus(new FocusNode());
+
+    date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (date != null) {
+      String formattedDate = DateFormat('yyyy-MM-dd').format(date);
+
+      _absen.clear();
+      membersReference
+          .child("absensi")
+          .orderByChild('tanggal')
+          .startAt(formattedDate)
+          .endAt(formattedDate)
+          .onChildAdded
+          .listen(_onAbsensi);
+    }
+  }
+
   void readData() {
     _items.clear();
     _absen.clear();
@@ -153,6 +189,7 @@ class _HomePageState extends State<AbsensiPage> {
         .child("absensi")
         .orderByChild('tanggal')
         .startAt(DateFormat('yyyy-MM-dd').format(DateTime.now()).toString())
+        .endAt(DateFormat('yyyy-MM-dd').format(DateTime.now()).toString())
         .onChildAdded
         .listen(_onAbsensi);
   }
@@ -164,17 +201,8 @@ class _HomePageState extends State<AbsensiPage> {
   }
 
   void _onAbsensi(Event event) async {
-    DateTime now = DateTime.now();
     setState(() {
       _absen.add(new GetAbsensi.fromSnapshot(event.snapshot));
-      // _list.forEach((e) {
-      //   if (DateFormat('yyyy-MM-dd').format(e.tanggal) ==
-      //       DateFormat('yyyy-MM-dd').format(now)) {
-      //     _absen.add(e);
-      //     print(e.id);
-      //   }
-      //   ;
-      // });
       _absen.sort((a, b) => b.tanggal.compareTo(a.tanggal));
     });
   }

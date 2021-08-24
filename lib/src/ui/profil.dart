@@ -18,6 +18,7 @@ class _ProfilPageState extends State<ProfilPage> {
       FirebaseDatabase.instance.reference().child('members');
 
   List items = List();
+  String _image = '';
   String _nama = '';
   String _alamat = '';
   String _tempatLahir = '';
@@ -41,6 +42,7 @@ class _ProfilPageState extends State<ProfilPage> {
     membersReference.child(widget.uid).once().then((value) {
       items.add(new GetMembers.fromSnapshot(value));
 
+      _image = items[0].image;
       _nama = items[0].nama;
       _alamat = items[0].alamat;
       _tipeMember = items[0].tipeMember;
@@ -76,6 +78,28 @@ class _ProfilPageState extends State<ProfilPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Container(
+                  height: MediaQuery.of(context).size.width * 0.3,
+                  width: MediaQuery.of(context).size.width * 0.3,
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        spreadRadius: 4,
+                        blurRadius: 4,
+                        offset: Offset(0, 2), // changes position of shadow
+                      ),
+                    ],
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    image: DecorationImage(
+                      image: _image == ''
+                          ? AssetImage('assets/noimage.png')
+                          : NetworkImage(_image),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
                 Container(
                   padding: EdgeInsets.only(left: 10, right: 10),
                   alignment: Alignment.centerLeft,

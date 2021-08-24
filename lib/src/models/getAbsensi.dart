@@ -3,7 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 class GetAbsensi {
   String _uid;
   String _id;
-  DateTime _tanggal;
+  String _tanggal;
 
   GetAbsensi(
     this._uid,
@@ -18,11 +18,11 @@ class GetAbsensi {
 
   String get uid => _uid;
   String get id => _id;
-  DateTime get tanggal => _tanggal;
+  String get tanggal => _tanggal;
 
   GetAbsensi.fromSnapshot(DataSnapshot snapshot) {
     _uid = snapshot.key;
     _id = snapshot.value['id'];
-    _tanggal = DateTime.parse(snapshot.value['tanggal']);
+    _tanggal = snapshot.value['tanggal'];
   }
 }
