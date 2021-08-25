@@ -70,6 +70,7 @@ class _EditPageState extends State<EditPage> {
     } else {
       if (_dropdownValue == 'Pengunjung') {
         membersReference.child(uid).update({
+          'image': imageUrl,
           'nama': _nama.text,
           'alamat': _alamat.text,
           'tempat_lahir': _tempatLahir.text,
@@ -84,6 +85,7 @@ class _EditPageState extends State<EditPage> {
         });
       } else {
         membersReference.child(uid).update({
+          'image': imageUrl,
           'nama': _nama.text,
           'alamat': _alamat.text,
           'tempat_lahir': _tempatLahir.text,
@@ -106,7 +108,9 @@ class _EditPageState extends State<EditPage> {
       image = await _picker.getImage(source: ImageSource.gallery);
     }
 
-    imageUrl = await storage.uploadImage(image);
+    if (image != null) {
+      imageUrl = await storage.uploadImage(image);
+    }
 
     setState(() {});
   }

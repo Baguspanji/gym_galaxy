@@ -81,7 +81,9 @@ class _AddPageState extends State<AddPage> {
       image = await _picker.getImage(source: ImageSource.gallery);
     }
 
-    imageUrl = await storage.uploadImage(image);
+    if (image != null) {
+      imageUrl = await storage.uploadImage(image);
+    }
 
     setState(() {});
   }
@@ -107,96 +109,108 @@ class _AddPageState extends State<AddPage> {
               ),
             ),
             SizedBox(height: 20),
-            Container(
-              height: MediaQuery.of(context).size.width * 0.3,
-              width: MediaQuery.of(context).size.width * 0.3,
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
-                    spreadRadius: 4,
-                    blurRadius: 4,
-                    offset: Offset(0, 2), // changes position of shadow
+            Expanded(
+              child: ListView(
+                children: [
+                  Center(
+                    child: Container(
+                      height: MediaQuery.of(context).size.width * 0.3,
+                      width: MediaQuery.of(context).size.width * 0.3,
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            spreadRadius: 4,
+                            blurRadius: 4,
+                            offset: Offset(0, 2), // changes position of shadow
+                          ),
+                        ],
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        image: DecorationImage(
+                          image: imageUrl == null
+                              ? AssetImage('assets/noimage.png')
+                              : NetworkImage(imageUrl),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
                   ),
-                ],
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                image: DecorationImage(
-                  image: imageUrl == null
-                      ? AssetImage('assets/noimage.png')
-                      : NetworkImage(imageUrl),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            Center(
-              child: Container(
-                padding: EdgeInsets.only(top: 2.0),
-                width: MediaQuery.of(context).size.width * 0.5,
-                child: Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      getImage(false);
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.only(top: 2.0),
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: Center(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            getImage(false);
+                          },
+                          child: Text(
+                            'Upload Gambar',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  buildInput(size, _nama, Icons.person_outline_outlined,
+                      'Masukkan Nama'),
+                  buildInput(
+                      size, _alamat, Icons.home_outlined, 'Masukkan Alamat'),
+                  buildInput(size, _tempatLahir, Icons.home_work_outlined,
+                      'Masukkan Tempat Lahir'),
+                  buildDatePicker(size, context, _dateLahir, _tanggalLahir,
+                      Icons.date_range_outlined, 'Masukkan Tanggal Lahir'),
+                  buildDropdown(size),
+                  buildMember(context, size),
+                  SizedBox(height: 20),
+                  InkWell(
+                    onTap: () {
+                      _onAdd(context);
                     },
-                    child: Text(
-                      'Upload Gambar',
-                      textAlign: TextAlign.center,
+                    child: Container(
+                      width: size.width * 0.8,
+                      height: size.height * 0.06,
+                      margin: EdgeInsets.symmetric(horizontal: 30),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: Colors.greenAccent,
+                          border: Border.all(
+                            width: 1,
+                            color: Colors.black54,
+                          ),
+                          borderRadius: BorderRadius.circular(18)),
+                      child: Text(
+                        "Simpan",
+                        style: TextStyle(fontSize: 20.0, color: Colors.black),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            buildInput(
-                size, _nama, Icons.person_outline_outlined, 'Masukkan Nama'),
-            buildInput(size, _alamat, Icons.home_outlined, 'Masukkan Alamat'),
-            buildInput(size, _tempatLahir, Icons.home_work_outlined,
-                'Masukkan Tempat Lahir'),
-            buildDatePicker(size, context, _dateLahir, _tanggalLahir,
-                Icons.date_range_outlined, 'Masukkan Tanggal Lahir'),
-            buildDropdown(size),
-            buildMember(context, size),
-            SizedBox(height: 20),
-            InkWell(
-              onTap: () {
-                _onAdd(context);
-              },
-              child: Container(
-                width: size.width * 0.8,
-                height: size.height * 0.06,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: Colors.greenAccent,
-                    border: Border.all(
-                      width: 1,
-                      color: Colors.black54,
+                  SizedBox(height: 20),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushReplacementNamed(context, '/home');
+                    },
+                    child: Container(
+                      width: size.width * 0.8,
+                      height: size.height * 0.06,
+                      margin: EdgeInsets.symmetric(horizontal: 30),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: Colors.blueAccent,
+                          border: Border.all(
+                            width: 1,
+                            color: Colors.black54,
+                          ),
+                          borderRadius: BorderRadius.circular(18)),
+                      child: Text(
+                        "Kembali",
+                        style: TextStyle(fontSize: 20.0, color: Colors.white),
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(18)),
-                child: Text(
-                  "Simpan",
-                  style: TextStyle(fontSize: 20.0, color: Colors.black),
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            InkWell(
-              onTap: () {
-                Navigator.pushReplacementNamed(context, '/home');
-              },
-              child: Container(
-                width: size.width * 0.8,
-                height: size.height * 0.06,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: Colors.blueAccent,
-                    border: Border.all(
-                      width: 1,
-                      color: Colors.black54,
-                    ),
-                    borderRadius: BorderRadius.circular(18)),
-                child: Text(
-                  "Kembali",
-                  style: TextStyle(fontSize: 20.0, color: Colors.white),
-                ),
+                  ),
+                  SizedBox(height: 20)
+                ],
               ),
             ),
           ],
@@ -224,6 +238,7 @@ class _AddPageState extends State<AddPage> {
   Container buildDropdown(Size size) {
     return Container(
       width: size.width * 0.8,
+      padding: EdgeInsets.symmetric(horizontal: 30),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -233,7 +248,7 @@ class _AddPageState extends State<AddPage> {
           ),
           Container(
             alignment: Alignment.center,
-            width: size.width * 0.7,
+            width: size.width * 0.748,
             margin: EdgeInsets.only(bottom: 10),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -287,6 +302,7 @@ class _AddPageState extends State<AddPage> {
   ) {
     return Container(
       width: size.width * 0.8,
+      padding: EdgeInsets.symmetric(horizontal: 30),
       margin: EdgeInsets.only(bottom: 10),
       child: TextField(
         controller: controller,
@@ -326,6 +342,7 @@ class _AddPageState extends State<AddPage> {
   ) {
     return Container(
       width: size.width * 0.8,
+      padding: EdgeInsets.symmetric(horizontal: 30),
       margin: EdgeInsets.only(bottom: 10),
       child: TextField(
         controller: controller,

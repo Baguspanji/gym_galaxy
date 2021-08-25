@@ -92,7 +92,7 @@ class _ProfilPageState extends State<ProfilPage> {
                     ],
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     image: DecorationImage(
-                      image: _image == ''
+                      image: _image == null
                           ? AssetImage('assets/noimage.png')
                           : NetworkImage(_image),
                       fit: BoxFit.cover,

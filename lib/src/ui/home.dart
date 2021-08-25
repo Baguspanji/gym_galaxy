@@ -320,7 +320,13 @@ class _HomePageState extends State<HomePage> {
 
     membersReference.child("members").onChildAdded.listen(_onMember);
 
-    // membersReference.child("absensi").onChildAdded.listen(_onAbsensi);
+    membersReference
+        .child("absensi")
+        .orderByChild('tanggal')
+        .startAt(DateFormat('yyyy-MM-dd').format(DateTime.now()).toString())
+        .endAt(DateFormat('yyyy-MM-dd').format(DateTime.now()).toString())
+        .onChildAdded
+        .listen(_onAbsensi);
   }
 
   void _onMember(Event event) {
@@ -342,10 +348,7 @@ class _HomePageState extends State<HomePage> {
         context: context,
         builder: (BuildContext context) {
           DateTime now = DateTime.now();
-          var absen = _absen.where((e) =>
-              e.id.contains(uid) &&
-              DateFormat('yyyy-MM-dd').format(DateTime.parse(e.tanggal)) ==
-                  DateFormat('yyyy-MM-dd').format(now));
+          var absen = _absen.where((e) => e.id.contains(uid));
           return SimpleDialog(
             title: Text('Pilih Aksi'),
             children: [
@@ -405,26 +408,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onAbsen(BuildContext context, String uid) {
-    membersReference
-        .child('absensi')
-        .orderByChild('tanggal')
-        .startAt(DateFormat('yyyy-MM-dd').format(DateTime.now()).toString())
-        .endAt(DateFormat('yyyy-MM-dd').format(DateTime.now()).toString())
-        .onChildAdded
-        .listen((e) {
-      if (e.snapshot.value['id'] == uid) {
-        Navigator.pop(context);
-        showAlertDialog(context, "Gagal", "Member sudah absen!");
-      } else {
-        membersReference.child("absensi").push().set({
-          'id': uid,
-          'tanggal': DateFormat('yyyy-MM-dd').format(DateTime.now()).toString()
-        }).then((_) {
-          readData();
-          Navigator.pop(context);
-          showAlertDialog(context, "Berhasil", "Berhasil Absensi!");
-        });
-      }
+    membersReference.child("absensi").push().set({
+      'id': uid,
+      'tanggal': DateFormat('yyyy-MM-dd').format(DateTime.now()).toString()
+    }).then((_) {
+      readData();
+      Navigator.pop(context);
+      showAlertDialog(context, "Berhasil", "Berhasil Absensi!");
     });
   }
 
