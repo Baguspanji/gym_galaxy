@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
-import 'package:gym_galaxy/src/ui/absensi.dart';
-import 'package:gym_galaxy/src/ui/home.dart';
-import 'package:gym_galaxy/src/ui/user.dart';
+import 'package:gym/src/ui/absensi.dart';
+import 'package:gym/src/ui/home.dart';
+import 'package:gym/src/ui/user.dart';
 
 class Navbar extends StatefulWidget {
-  Navbar({Key key}) : super(key: key);
-
   @override
   _NavbarState createState() => _NavbarState();
 }
 
 class _NavbarState extends State<Navbar> {
   int _currentIndex = 0;
-  PageController _pageController;
+  final _pageController = PageController();
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
   }
 
   @override

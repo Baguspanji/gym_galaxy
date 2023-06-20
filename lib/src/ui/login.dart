@@ -1,16 +1,14 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:gym_galaxy/src/models/getUsers.dart';
+import 'package:gym/src/models/getUsers.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:gym_galaxy/src/shared/preference.dart';
-import 'package:gym_galaxy/src/ui/navigation.dart';
+import 'package:gym/src/shared/preference.dart';
+import 'package:gym/src/ui/navigation.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key}) : super(key: key);
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -18,16 +16,16 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final membersReference = FirebaseDatabase.instance.reference();
 
-  GoogleSignIn _googleSignIn = GoogleSignIn();
-  FirebaseAuth _auth;
+  final _googleSignIn = GoogleSignIn();
+  final _auth = FirebaseAuth.instance;
   bool isUserSignedIn = false;
-  List _users = List();
+  List _users = [];
 
   Future<UserCredential> signInWithGoogle() async {
-    final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
     final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+        await googleUser!.authentication;
 
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
@@ -53,10 +51,10 @@ class _LoginPageState extends State<LoginPage> {
 
   void _cekSignIn() async {
     await Firebase.initializeApp();
-    FirebaseAuth.instance.authStateChanges().listen((User user) async {
-      await setNama(user.displayName);
-      await setEmail(user.email);
-      await setFoto(user.photoURL);
+    FirebaseAuth.instance.authStateChanges().listen((user) async {
+      await setNama(user!.displayName!);
+      await setEmail(user.email!);
+      await setFoto(user.photoURL!);
       _users.forEach((e) async {
         if (e.email.contains(user.email)) {
           isUserSignedIn = true;
@@ -80,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
 
   showAlertDialog(BuildContext context) {
     // set up the button
-    Widget okButton = FlatButton(
+    Widget okButton = TextButton(
       child: Text("OK"),
       onPressed: () {
         return;

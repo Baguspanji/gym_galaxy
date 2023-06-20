@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "491877636349",
+    "project_id": "gym-galaxy",
+    "storage_bucket": "gym-galaxy.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:491877636349:android:ad23fa4061d7c5b80a0694",
+        "android_client_info": {
+          "package_name": "com.example.gym"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "491877636349-odnpl379il5dj2amss35itirr81urbqc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBw8q-NyKH6vz50sEdHddXb5qYrWEB5LDk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "491877636349-odnpl379il5dj2amss35itirr81urbqc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

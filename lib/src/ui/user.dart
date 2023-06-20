@@ -1,15 +1,11 @@
-import 'dart:ffi';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:gym_galaxy/src/shared/preference.dart';
-import 'package:gym_galaxy/src/ui/addUser.dart';
+import 'package:gym/src/shared/preference.dart';
+import 'package:gym/src/ui/addUser.dart';
 
 class UserPage extends StatefulWidget {
-  UserPage({Key key}) : super(key: key);
-
   @override
   _UserPageState createState() => _UserPageState();
 }

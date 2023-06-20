@@ -3,13 +3,11 @@ import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:date_time_picker/date_time_picker.dart';
-import 'package:format_indonesia/format_indonesia.dart';
-import 'package:gym_galaxy/firebase/storage.dart';
+import 'package:gym/firebase/storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class AddPage extends StatefulWidget {
-  AddPage({Key key}) : super(key: key);
-
   @override
   _AddPageState createState() => _AddPageState();
 }
@@ -17,7 +15,7 @@ class AddPage extends StatefulWidget {
 class _AddPageState extends State<AddPage> {
   final databaseReference = FirebaseDatabase.instance.reference();
 
-  String imageUrl;
+  String? imageUrl;
 
   TextEditingController _nama = new TextEditingController();
   TextEditingController _alamat = new TextEditingController();
@@ -73,7 +71,7 @@ class _AddPageState extends State<AddPage> {
 
   Future<void> getImage(bool select) async {
     ImagePicker _picker = ImagePicker();
-    PickedFile image;
+    PickedFile? image;
 
     if (select) {
       image = await _picker.getImage(source: ImageSource.camera);
@@ -127,9 +125,7 @@ class _AddPageState extends State<AddPage> {
                         ],
                         borderRadius: BorderRadius.all(Radius.circular(5.0)),
                         image: DecorationImage(
-                          image: imageUrl == null
-                              ? AssetImage('assets/noimage.png')
-                              : NetworkImage(imageUrl),
+                          image: NetworkImage(imageUrl!),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -252,16 +248,16 @@ class _AddPageState extends State<AddPage> {
             margin: EdgeInsets.only(bottom: 10),
             decoration: BoxDecoration(
               color: Colors.white,
-              border: Border.all(width: 1, color: Colors.grey[500]),
+              border: Border.all(width: 1, color: Colors.grey.shade500),
               borderRadius: BorderRadius.circular(4),
             ),
             child: DropdownButton<String>(
               value: _dropdownValue,
               elevation: 16,
               style: const TextStyle(color: Colors.grey),
-              onChanged: (String newValue) {
+              onChanged: (value) {
                 setState(() {
-                  _dropdownValue = newValue;
+                  _dropdownValue = value!;
                 });
               },
               items: <String>[
@@ -277,7 +273,7 @@ class _AddPageState extends State<AddPage> {
                     child: Text(
                       value,
                       style: _style(
-                        Colors.grey[500],
+                        Colors.grey.shade500,
                         16,
                         FontWeight.w400,
                       ),
@@ -318,17 +314,19 @@ class _AddPageState extends State<AddPage> {
           DateTime date = DateTime(1900);
           FocusScope.of(context).requestFocus(new FocusNode());
 
-          date = await showDatePicker(
+          DateTime? now = DateTime.now();
+
+          date = (await showDatePicker(
             context: context,
-            initialDate: DateTime.now(),
-            firstDate: DateTime(2000),
-            lastDate: DateTime(2100),
-          );
+            initialDate: now,
+            firstDate: now,
+            lastDate: now,
+          ))!;
 
           String formattedDate = DateFormat('yyyy-MM-dd').format(date);
           dateController.text = formattedDate;
           DateTime datetime = DateTime.parse(formattedDate);
-          controller.text = Waktu(datetime).yMMMMEEEEd();
+          controller.text = DateFormat('dd MMMM yyyy').format(datetime);
         },
       ),
     );
@@ -360,10 +358,10 @@ class _AddPageState extends State<AddPage> {
 
   showAlertDialog(BuildContext context) {
     // set up the button
-    Widget okButton = FlatButton(
+    Widget okButton = TextButton(
       child: Text("OK"),
       onPressed: () {
-        return;
+        Navigator.pushReplacementNamed(context, '/home');
       },
     );
 

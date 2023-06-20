@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:gym_galaxy/src/ui/add.dart';
-import 'package:gym_galaxy/src/ui/login.dart';
-import 'package:gym_galaxy/src/ui/navigation.dart';
-import 'package:gym_galaxy/src/ui/splashScreen.dart';
+import 'package:gym/src/ui/add.dart';
+import 'package:gym/src/ui/login.dart';
+import 'package:gym/src/ui/navigation.dart';
+import 'package:gym/src/ui/splashScreen.dart';
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.

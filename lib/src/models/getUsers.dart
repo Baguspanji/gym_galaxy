@@ -1,9 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
 
 class GetUsers {
-  String _uid;
-  String _email;
-  String _role;
+  String? _uid;
+  String? _email;
+  String? _role;
 
   GetUsers(
     this._uid,
@@ -16,13 +16,13 @@ class GetUsers {
     this._role = obj['role'];
   }
 
-  String get uid => _uid;
-  String get email => _email;
-  String get role => _role;
+  String get uid => _uid!;
+  String get email => _email!;
+  String get role => _role!;
 
   GetUsers.fromSnapshot(DataSnapshot snapshot) {
     _uid = snapshot.key;
-    _email = snapshot.value['email'];
-    _role = snapshot.value['role'];
+    _email = (snapshot.value as dynamic)['email'];
+    _role = (snapshot.value as dynamic)['role'];
   }
 }

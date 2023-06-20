@@ -1,9 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
 
 class GetAbsensi {
-  String _uid;
-  String _id;
-  String _tanggal;
+  String? _uid;
+  String? _id;
+  String? _tanggal;
 
   GetAbsensi(
     this._uid,
@@ -16,13 +16,13 @@ class GetAbsensi {
     this._tanggal = obj['tanggal'];
   }
 
-  String get uid => _uid;
-  String get id => _id;
-  String get tanggal => _tanggal;
+  String get uid => _uid!;
+  String get id => _id!;
+  String get tanggal => _tanggal!;
 
   GetAbsensi.fromSnapshot(DataSnapshot snapshot) {
     _uid = snapshot.key;
-    _id = snapshot.value['id'];
-    _tanggal = snapshot.value['tanggal'];
+    _id = (snapshot.value as dynamic)['id'];
+    _tanggal = (snapshot.value as dynamic)['tanggal'];
   }
 }

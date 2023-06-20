@@ -1,13 +1,11 @@
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:format_indonesia/format_indonesia.dart';
-import 'package:gym_galaxy/src/models/getAbsensi.dart';
-import 'package:gym_galaxy/src/models/getMembers.dart';
+import 'package:gym/src/models/getAbsensi.dart';
+import 'package:gym/src/models/getMembers.dart';
+import 'package:intl/intl.dart';
 
 class AbsensiPage extends StatefulWidget {
-  AbsensiPage({Key key}) : super(key: key);
-
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -18,9 +16,9 @@ class _HomePageState extends State<AbsensiPage> {
   TextEditingController _dateLahir = TextEditingController();
   TextEditingController _tanggalLahir = TextEditingController();
 
-  List<GetMembers> _items = List();
-  List<GetAbsensi> _absen = List();
-  List<GetAbsensi> _list = List();
+  List<GetMembers> _items = [];
+  List<GetAbsensi> _absen = [];
+  List<GetAbsensi> _list = [];
 
   @override
   void initState() {
@@ -100,7 +98,7 @@ class _HomePageState extends State<AbsensiPage> {
 
   Container buildItems(
       Size size, String uid, String nama, String alamat, String now) {
-    String _now = (Waktu(DateTime.parse(now)).yMMMMEEEEd()).toString();
+    String _now = (DateTime.parse(now)).toString();
     return Container(
       margin: EdgeInsets.only(bottom: 8),
       height: size.height * 0.13,
@@ -142,7 +140,7 @@ class _HomePageState extends State<AbsensiPage> {
               Text(
                 _now,
                 style: _style(
-                  Colors.grey[600],
+                  Colors.grey.shade600,
                   14,
                   FontWeight.w500,
                 ),
@@ -158,12 +156,14 @@ class _HomePageState extends State<AbsensiPage> {
     DateTime date = DateTime(1900);
     FocusScope.of(context).requestFocus(new FocusNode());
 
-    date = await showDatePicker(
+    DateTime? now = DateTime.now();
+
+    date = (await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
+      initialDate: now,
+      firstDate: now,
+      lastDate: now,
+    ))!;
 
     if (date != null) {
       String formattedDate = DateFormat('yyyy-MM-dd').format(date);
@@ -194,13 +194,13 @@ class _HomePageState extends State<AbsensiPage> {
         .listen(_onAbsensi);
   }
 
-  void _onMember(Event event) {
+  void _onMember(event) {
     setState(() {
       _items.add(new GetMembers.fromSnapshot(event.snapshot));
     });
   }
 
-  void _onAbsensi(Event event) async {
+  void _onAbsensi(event) async {
     setState(() {
       _absen.add(new GetAbsensi.fromSnapshot(event.snapshot));
       _absen.sort((a, b) => b.tanggal.compareTo(a.tanggal));

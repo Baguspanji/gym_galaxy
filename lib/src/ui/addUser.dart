@@ -3,13 +3,10 @@ import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:date_time_picker/date_time_picker.dart';
-import 'package:format_indonesia/format_indonesia.dart';
-import 'package:gym_galaxy/firebase/storage.dart';
+import 'package:gym/firebase/storage.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddUser extends StatefulWidget {
-  AddUser({Key key}) : super(key: key);
-
   @override
   _AddUserState createState() => _AddUserState();
 }
@@ -137,10 +134,10 @@ class _AddUserState extends State<AddUser> {
 
   showAlertDialog(BuildContext context) {
     // set up the button
-    Widget okButton = FlatButton(
+    Widget okButton = TextButton(
       child: Text("OK"),
       onPressed: () {
-        return;
+        Navigator.of(context).pop();
       },
     );
 

@@ -1,13 +1,13 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:format_indonesia/format_indonesia.dart';
-import 'package:gym_galaxy/src/models/getMembers.dart';
+import 'package:gym/src/models/getMembers.dart';
 
 import 'edit.dart';
 
 class ProfilPage extends StatefulWidget {
   final String uid;
-  ProfilPage({Key key, this.uid}) : super(key: key);
+
+  const ProfilPage({Key? key, required this.uid}) : super(key: key);
 
   @override
   _ProfilPageState createState() => _ProfilPageState();
@@ -17,7 +17,7 @@ class _ProfilPageState extends State<ProfilPage> {
   final membersReference =
       FirebaseDatabase.instance.reference().child('members');
 
-  List items = List();
+  List items = [];
   String _image = '';
   String _nama = '';
   String _alamat = '';
@@ -40,7 +40,7 @@ class _ProfilPageState extends State<ProfilPage> {
 
   void _readData() {
     membersReference.child(widget.uid).once().then((value) {
-      items.add(new GetMembers.fromSnapshot(value));
+      // items.add(new GetMembers.fromSnapshot(value));
 
       _image = items[0].image;
       _nama = items[0].nama;
@@ -50,11 +50,11 @@ class _ProfilPageState extends State<ProfilPage> {
       _tempatLahir = items[0].tempatLahir;
       dari = items[0].dari;
       sampai = items[0].sampai;
-      _dari = (Waktu(items[0].dari).yMMMMEEEEd()).toString();
-      _sampai = (Waktu(items[0].sampai).yMMMMEEEEd()).toString();
+      _dari = items[0].dari;
+      _sampai = items[0].sampai;
 
       // DateTime datetime = DateTime.parse(items[0].tanggalLahir);
-      _tanggalLahir = (Waktu(items[0].tanggalLahir).yMMMMEEEEd()).toString();
+      _tanggalLahir = items[0].tanggalLahir;
       setState(() {});
     });
   }
@@ -92,9 +92,7 @@ class _ProfilPageState extends State<ProfilPage> {
                     ],
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     image: DecorationImage(
-                      image: _image == null
-                          ? AssetImage('assets/noimage.png')
-                          : NetworkImage(_image),
+                      image: NetworkImage(_image),
                       fit: BoxFit.cover,
                     ),
                   ),

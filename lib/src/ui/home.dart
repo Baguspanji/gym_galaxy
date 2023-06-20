@@ -1,16 +1,14 @@
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:format_indonesia/format_indonesia.dart';
-import 'package:gym_galaxy/src/models/getAbsensi.dart';
-import 'package:gym_galaxy/src/models/getMembers.dart';
-import 'package:gym_galaxy/src/ui/perpanjangan.dart';
-import 'package:gym_galaxy/src/ui/profil.dart';
-import 'package:gym_galaxy/src/ui/utils/dialog.dart';
+import 'package:gym/src/models/getAbsensi.dart';
+import 'package:gym/src/models/getMembers.dart';
+import 'package:gym/src/ui/perpanjangan.dart';
+import 'package:gym/src/ui/profil.dart';
+import 'package:gym/src/ui/utils/dialog.dart';
+import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
-
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -20,9 +18,9 @@ class _HomePageState extends State<HomePage> {
 
   final membersReference = FirebaseDatabase.instance.reference();
 
-  List<GetMembers> _items = List();
-  List<GetMembers> _search = List();
-  List<GetAbsensi> _absen = List();
+  List<GetMembers> _items = [];
+  List<GetMembers> _search = [];
+  List<GetAbsensi> _absen = [];
 
   @override
   void initState() {
@@ -132,8 +130,8 @@ class _HomePageState extends State<HomePage> {
                               cari.id,
                               cari.nama,
                               cari.alamat,
-                              cari.dari,
-                              cari.sampai,
+                              DateTime.parse(cari.dari),
+                              DateTime.parse(cari.sampai),
                               cari.tipeMember,
                               cari.status,
                               cari.image,
@@ -154,8 +152,8 @@ class _HomePageState extends State<HomePage> {
                               item.id,
                               item.nama,
                               item.alamat,
-                              item.dari,
-                              item.sampai,
+                              DateTime.parse(item.dari),
+                              DateTime.parse(item.sampai),
                               item.tipeMember,
                               item.status,
                               item.image,
@@ -173,8 +171,8 @@ class _HomePageState extends State<HomePage> {
 
   Container buildItems(Size size, String uid, String nama, String alamat,
       DateTime dari, DateTime sampai, String member, int status, String image) {
-    String _dari = (Waktu(dari).yMMMMEEEEd()).toString();
-    String _sampai = (Waktu(sampai).yMMMMEEEEd()).toString();
+    String _dari = dari.toString();
+    String _sampai = sampai.toString();
     return Container(
       margin: EdgeInsets.only(bottom: 8),
       height: size.height * 0.13,
@@ -204,9 +202,7 @@ class _HomePageState extends State<HomePage> {
                 borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: image == null
-                      ? AssetImage('assets/noimage.png')
-                      : NetworkImage(image),
+                  image: NetworkImage(image),
                 ),
               ),
             ),
@@ -329,15 +325,15 @@ class _HomePageState extends State<HomePage> {
         .listen(_onAbsensi);
   }
 
-  void _onMember(Event event) {
+  void _onMember(event) {
     setState(() {
       _items.add(new GetMembers.fromSnapshot(event.snapshot));
       _items.sort((a, b) => b.status.compareTo(a.status));
-      _items.sort((e, f) => f.sampai.compareTo(DateTime.now()));
+      _items.sort((e, f) => f.sampai.compareTo(e.sampai));
     });
   }
 
-  void _onAbsensi(Event event) {
+  void _onAbsensi(event) {
     setState(() {
       _absen.add(new GetAbsensi.fromSnapshot(event.snapshot));
     });
@@ -434,7 +430,7 @@ class _HomePageState extends State<HomePage> {
 
   showAlertDialog(BuildContext context, String title, String isi) {
     // set up the button
-    Widget okButton = FlatButton(
+    Widget okButton = TextButton(
       child: Text("OK"),
       onPressed: () {
         return;

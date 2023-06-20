@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _cekSignIn() async {
     await Firebase.initializeApp();
-    FirebaseAuth.instance.authStateChanges().listen((User user) {
+    FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user == null) {
         Navigator.pushReplacementNamed(context, '/login');
       } else {

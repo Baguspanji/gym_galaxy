@@ -1,16 +1,16 @@
 import 'package:firebase_database/firebase_database.dart';
 
 class GetMembers {
-  String _id;
-  String _alamat;
-  String _image;
-  String _nama;
-  DateTime _tanggalLahir;
-  String _tempatLahir;
-  String _tipeMember;
-  int _status;
-  DateTime _dari;
-  DateTime _sampai;
+  String? _id;
+  String? _alamat;
+  String? _image;
+  String? _nama;
+  String? _tanggalLahir;
+  String? _tempatLahir;
+  String? _tipeMember;
+  int? _status;
+  String? _dari;
+  String? _sampai;
 
   GetMembers(
     this._id,
@@ -39,31 +39,27 @@ class GetMembers {
         obj['member']['sampai'] != '' ? obj['member']['sampai'] : '0000-00-00';
   }
 
-  String get id => _id;
-  String get alamat => _alamat;
-  String get image => _image;
-  String get nama => _nama;
-  DateTime get tanggalLahir => _tanggalLahir;
-  String get tempatLahir => _tempatLahir;
-  String get tipeMember => _tipeMember;
-  int get status => _status;
-  DateTime get dari => _dari;
-  DateTime get sampai => _sampai;
+  String get id => _id!;
+  String get alamat => _alamat!;
+  String get image => _image!;
+  String get nama => _nama!;
+  String get tanggalLahir => _tanggalLahir!;
+  String get tempatLahir => _tempatLahir!;
+  String get tipeMember => _tipeMember!;
+  int get status => _status!;
+  String get dari => _dari!;
+  String get sampai => _sampai!;
 
   GetMembers.fromSnapshot(DataSnapshot snapshot) {
     _id = snapshot.key;
-    _alamat = snapshot.value['alamat'];
-    _image = snapshot.value['image'];
-    _nama = snapshot.value['nama'];
-    _tanggalLahir = DateTime.parse(snapshot.value['tanggal_lahir']);
-    _tempatLahir = snapshot.value['tempat_lahir'];
-    _tipeMember = snapshot.value['tipe_member'];
-    _status = snapshot.value['status'];
-    _dari = DateTime.parse(snapshot.value['member']['dari'] != ''
-        ? snapshot.value['member']['dari']
-        : '0000-00-00');
-    _sampai = DateTime.parse(snapshot.value['member']['sampai'] != ''
-        ? snapshot.value['member']['sampai']
-        : '0000-00-00');
+    _alamat = (snapshot.value as dynamic)['alamat'];
+    _image = (snapshot.value as dynamic)['image'];
+    _nama = (snapshot.value as dynamic)['nama'];
+    _tanggalLahir = (snapshot.value as dynamic)['tanggal_lahir'];
+    _tempatLahir = (snapshot.value as dynamic)['tempat_lahir'];
+    _tipeMember = (snapshot.value as dynamic)['tipe_member'];
+    _status = (snapshot.value as dynamic)['status'];
+    _dari = (snapshot.value as dynamic)['member']['dari'];
+    _sampai = (snapshot.value as dynamic)['member']['sampai'];
   }
 }

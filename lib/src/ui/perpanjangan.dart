@@ -1,12 +1,13 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:date_time_picker/date_time_picker.dart';
-import 'package:format_indonesia/format_indonesia.dart';
-import 'package:gym_galaxy/src/models/getMembers.dart';
+import 'package:gym/src/models/getMembers.dart';
+import 'package:intl/intl.dart';
 
 class PerpanjanganPage extends StatefulWidget {
   final String uid;
-  PerpanjanganPage({Key key, this.uid}) : super(key: key);
+
+  const PerpanjanganPage({Key? key, required this.uid}) : super(key: key);
 
   @override
   _PerpanjanganPageState createState() => _PerpanjanganPageState();
@@ -16,7 +17,7 @@ class _PerpanjanganPageState extends State<PerpanjanganPage> {
   final membersReference =
       FirebaseDatabase.instance.reference().child('members');
 
-  List items = new List();
+  List items = [];
   TextEditingController _dateDari = TextEditingController();
   TextEditingController _tanggalDari = TextEditingController();
   TextEditingController _dateSampai = TextEditingController();
@@ -38,7 +39,7 @@ class _PerpanjanganPageState extends State<PerpanjanganPage> {
 
   void readData() {
     membersReference.child(widget.uid).once().then((value) {
-      items.add(new GetMembers.fromSnapshot(value));
+      // items.add(new GetMembers.fromSnapshot(value));
 
       _tanggalDari.text = items[0].dari != DateTime.parse('0000-00-00')
           ? (items[0].dari).toString()
@@ -46,12 +47,8 @@ class _PerpanjanganPageState extends State<PerpanjanganPage> {
       _tanggalSampai.text = items[0].sampai != DateTime.parse('0000-00-00')
           ? (items[0].sampai).toString()
           : '';
-      _dateDari.text = items[0].dari != DateTime.parse('0000-00-00')
-          ? (Waktu(items[0].dari).yMMMMEEEEd()).toString()
-          : '';
-      _dateSampai.text = items[0].sampai != DateTime.parse('0000-00-00')
-          ? (Waktu(items[0].sampai).yMMMMEEEEd()).toString()
-          : '';
+      _dateDari.text = items[0].dari;
+      _dateSampai.text = items[0].sampai;
     });
   }
 
@@ -168,17 +165,19 @@ class _PerpanjanganPageState extends State<PerpanjanganPage> {
           DateTime date = DateTime(1900);
           FocusScope.of(context).requestFocus(new FocusNode());
 
-          date = await showDatePicker(
+          DateTime? now = DateTime.now();
+
+          date = (await showDatePicker(
             context: context,
-            initialDate: DateTime.now(),
-            firstDate: DateTime(2000),
-            lastDate: DateTime(2100),
-          );
+            initialDate: now,
+            firstDate: now,
+            lastDate: now,
+          ))!;
 
           String formattedDate = DateFormat('yyyy-MM-dd').format(date);
           dateController.text = formattedDate;
           DateTime datetime = DateTime.parse(formattedDate);
-          controller.text = Waktu(datetime).yMMMMEEEEd();
+          controller.text = datetime.toString();
         },
       ),
     );
@@ -186,7 +185,7 @@ class _PerpanjanganPageState extends State<PerpanjanganPage> {
 
   showAlertDialog(BuildContext context) {
     // set up the button
-    Widget okButton = FlatButton(
+    Widget okButton = TextButton(
       child: Text("OK"),
       onPressed: () {
         return;
