@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:date_time_picker/date_time_picker.dart';
-import 'package:gym/firebase/storage.dart';
+import 'package:gym/src/firebase/storage.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddUser extends StatefulWidget {
